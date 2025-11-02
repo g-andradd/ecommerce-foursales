@@ -31,3 +31,29 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# MySQL (Docker)
+db/data/
+**/mysql.sock
+**/*.pid
+**/auto.cnf
+**/binlog.index
+**/ib_*
+
+# Builds / Maven
+/target/
+/.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+/.idea/
+/*.iml
+
+# SO
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Node (se tiver)
+/node_modules/
