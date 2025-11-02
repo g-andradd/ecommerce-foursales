@@ -9,23 +9,30 @@
 -- ===================================
 --  Usuários (ADMIN + USER)
 -- ===================================
-INSERT INTO usuarios (id, nome, email, senha, papel)
+INSERT INTO usuarios (id, nome, email, senha, perfil, ativo)
 VALUES
     (UNHEX(REPLACE(UUID(), '-', '')),
      'Administrador',
      'admin@demo.com',
      '$2a$10$2bPZ/5p9ZUd6s0b2Y0F7puQmS6b1v8q0o7L9J0QmT0y7r3mS1b0H6',
-     'ADMIN'),
+     'ADMIN',
+     TRUE
+    ),
     (UNHEX(REPLACE(UUID(), '-', '')),
-     'Joao Silva',
+     'João Silva',
      'joao@demo.com',
      '$2a$10$2bPZ/5p9ZUd6s0b2Y0F7puQmS6b1v8q0o7L9J0QmT0y7r3mS1b0H6',
-     'USER'),
+     'USER',
+     TRUE
+    ),
     (UNHEX(REPLACE(UUID(), '-', '')),
      'Maria Souza',
      'maria@demo.com',
      '$2a$10$2bPZ/5p9ZUd6s0b2Y0F7puQmS6b1v8q0o7L9J0QmT0y7r3mS1b0H6',
-     'USER');
+     'USER',
+     TRUE
+    );
+
 
 -- Senha: “123” (hash BCrypt fixo apenas para testes)
 -- ===================================

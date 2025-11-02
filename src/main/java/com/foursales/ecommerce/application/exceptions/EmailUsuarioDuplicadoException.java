@@ -1,4 +1,4 @@
-package com.foursales.ecommerce.application.usuario;
+package com.foursales.ecommerce.application.exceptions;
 
 public class EmailUsuarioDuplicadoException extends RuntimeException {
 

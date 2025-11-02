@@ -1,4 +1,4 @@
-package com.foursales.ecommerce.api.erros;
+package com.foursales.ecommerce.api.exception;
 
 public record ErroCampo(String campo, String mensagem) {
 }

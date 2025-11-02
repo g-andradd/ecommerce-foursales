@@ -1,4 +1,4 @@
-package com.foursales.ecommerce.infra.security.token;
+package com.foursales.ecommerce.infra.security;
 
 import java.time.Duration;
 

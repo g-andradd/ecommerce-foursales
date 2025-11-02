@@ -1,4 +1,4 @@
-package com.foursales.ecommerce.api.erros;
+package com.foursales.ecommerce.api.exception;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -11,36 +11,36 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.foursales.ecommerce.application.autenticacao.CredenciaisInvalidasException;
-import com.foursales.ecommerce.application.usuario.EmailUsuarioDuplicadoException;
+import com.foursales.ecommerce.application.exceptions.CredenciaisInvalidasException;
+import com.foursales.ecommerce.application.exceptions.EmailUsuarioDuplicadoException;
 
 @RestControllerAdvice
-public class TratadorErrosGlobal {
+public class ApiExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErroResposta> tratarValidacao(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErroResponse> tratarValidacao(MethodArgumentNotValidException ex) {
         List<ErroCampo> campos = ex.getBindingResult().getFieldErrors().stream()
                 .map(this::mapearCampo)
                 .toList();
-        var resposta = new ErroResposta("VALIDACAO", "Existem campos invalidos", agora(), campos);
+        var resposta = new ErroResponse("VALIDACAO", "Existem campos invalidos", agora(), campos);
         return ResponseEntity.badRequest().body(resposta);
     }
 
     @ExceptionHandler(EmailUsuarioDuplicadoException.class)
-    public ResponseEntity<ErroResposta> tratarEmailDuplicado(EmailUsuarioDuplicadoException ex) {
-        var resposta = new ErroResposta("CONFLITO", ex.getMessage(), agora(), List.of());
+    public ResponseEntity<ErroResponse> tratarEmailDuplicado(EmailUsuarioDuplicadoException ex) {
+        var resposta = new ErroResponse("CONFLITO", ex.getMessage(), agora(), List.of());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(resposta);
     }
 
     @ExceptionHandler(CredenciaisInvalidasException.class)
-    public ResponseEntity<ErroResposta> tratarCredenciaisInvalidas(CredenciaisInvalidasException ex) {
-        var resposta = new ErroResposta("NAO_AUTORIZADO", ex.getMessage(), agora(), List.of());
+    public ResponseEntity<ErroResponse> tratarCredenciaisInvalidas(CredenciaisInvalidasException ex) {
+        var resposta = new ErroResponse("NAO_AUTORIZADO", ex.getMessage(), agora(), List.of());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErroResposta> tratarErroGenerico(Exception ex) {
-        var resposta = new ErroResposta("ERRO_INTERNO", "Erro inesperado", agora(), List.of());
+    public ResponseEntity<ErroResponse> tratarErroGenerico(Exception ex) {
+        var resposta = new ErroResponse("ERRO_INTERNO", "Erro inesperado", agora(), List.of());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resposta);
     }
 
