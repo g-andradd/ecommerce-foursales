@@ -8,10 +8,10 @@ import java.util.Map;
 import com.foursales.ecommerce.api.auth.dto.LoginRequest;
 import com.foursales.ecommerce.api.auth.dto.LoginResponse;
 import com.foursales.ecommerce.api.auth.dto.RegistrarUsuarioRequest;
-import com.foursales.ecommerce.application.exceptions.CredenciaisInvalidasException;
-import com.foursales.ecommerce.application.exceptions.EmailUsuarioDuplicadoException;
-import com.foursales.ecommerce.domain.entities.PerfilTipo;
-import com.foursales.ecommerce.domain.entities.UsuarioEntity;
+import com.foursales.ecommerce.application.auth.exception.CredenciaisInvalidasException;
+import com.foursales.ecommerce.application.auth.exception.EmailUsuarioDuplicadoException;
+import com.foursales.ecommerce.domain.entity.TipoPerfil;
+import com.foursales.ecommerce.domain.entity.Usuario;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,18 +25,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class AutenticacaoService {
 
     private final AuthenticationManager authenticationManager;
-    private final TokenResponse tokenService;
+    private final TokenService tokenService;
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public LoginResponse login(LoginRequest request) {
-        final String emailNorm = normalizeEmail(request.email());
-        final String rawPassword = nonBlank(request.senha(), "Senha é obrigatória");
+        final String emailNormalizado = normalizeEmail(request.email());
+        final String senhaNormalizada = normalizeSenha(request.senha());
 
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(emailNorm, rawPassword)
+                    new UsernamePasswordAuthenticationToken(emailNormalizado, senhaNormalizada)
             );
         } catch (BadCredentialsException e) {
             throw new CredenciaisInvalidasException("Credenciais inválidas");
@@ -46,7 +46,7 @@ public class AutenticacaoService {
             throw new CredenciaisInvalidasException("Conta bloqueada");
         }
 
-        UsuarioEntity usuario = usuarioRepository.findByEmail(emailNorm)
+        Usuario usuario = usuarioRepository.findByEmail(emailNormalizado)
                 .orElseThrow(() -> new CredenciaisInvalidasException("Usuário não encontrado"));
 
         if (!usuario.isAtivo()) {
@@ -54,7 +54,7 @@ public class AutenticacaoService {
         }
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("sub", usuario.getId().toString());
+        claims.put("uid", usuario.getId().toString());
         claims.put("roles", List.of(usuario.getPerfil().name()));
         claims.put("name", usuario.getNome());
 
@@ -71,9 +71,9 @@ public class AutenticacaoService {
             throw new EmailUsuarioDuplicadoException("Email já cadastrado");
         }
 
-        PerfilTipo perfil = request.perfil() != null ? request.perfil() : PerfilTipo.USER;
+        TipoPerfil perfil = request.perfil() != null ? request.perfil() : TipoPerfil.USER;
 
-        UsuarioEntity usuario = UsuarioEntity.builder()
+        Usuario usuario = Usuario.builder()
                 .nome(request.nome())
                 .email(emailNorm)
                 .senha(passwordEncoder.encode(request.senha()))
@@ -91,8 +91,8 @@ public class AutenticacaoService {
         return norm;
     }
 
-    private String nonBlank(String value, String message) {
-        if (value == null || value.trim().isEmpty()) throw new CredenciaisInvalidasException(message);
+    private String normalizeSenha(String value) {
+        if (value == null || value.trim().isEmpty()) throw new CredenciaisInvalidasException("Senha é obrigatória");
         return value;
     }
 }
