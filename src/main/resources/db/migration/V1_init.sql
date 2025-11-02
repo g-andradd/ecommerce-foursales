@@ -1,12 +1,18 @@
-CREATE TABLE usuarios (
-    id BINARY(16) PRIMARY KEY,
-    nome VARCHAR(120) NOT NULL,
-    email VARCHAR(120) NOT NULL UNIQUE,
-    senha VARCHAR(120) NOT NULL,
-    papel ENUM('ADMIN','USER') NOT NULL,
-    criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
+DROP TABLE IF EXISTS usuarios;
 
+CREATE TABLE usuarios (
+                          id BINARY(16) PRIMARY KEY,
+                          nome VARCHAR(120) NOT NULL,
+                          email VARCHAR(160) NOT NULL UNIQUE,
+                          senha VARCHAR(120) NOT NULL,
+                          perfil VARCHAR(10) NOT NULL, -- ADMIN | USER
+                          criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                          atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                          ativo BOOLEAN NOT NULL DEFAULT TRUE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE INDEX idx_usuarios_email ON usuarios (email);
+CREATE INDEX idx_usuarios_perfil ON usuarios (perfil);
 
 CREATE TABLE produtos (
     id BINARY(16) PRIMARY KEY,
