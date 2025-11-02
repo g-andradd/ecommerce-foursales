@@ -1,6 +1,6 @@
 package com.foursales.ecommerce.api.auth.dto;
 
-import com.foursales.ecommerce.domain.entities.PerfilTipo;
+import com.foursales.ecommerce.domain.entity.TipoPerfil;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,5 +21,5 @@ public record RegistrarUsuarioRequest(
         String senha,
 
         @NotNull(message = "Perfil é obrigatório")
-        PerfilTipo perfil
+        TipoPerfil perfil
 ) { }

@@ -2,7 +2,7 @@ package com.foursales.ecommerce.infra.security;
 
 import java.io.IOException;
 
-import com.foursales.ecommerce.application.auth.TokenResponse;
+import com.foursales.ecommerce.application.auth.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final TokenResponse tokenService;
+    private final TokenService tokenService;
     private final DetalhesUsuarioService detalhesUsuarioService;
 
 
