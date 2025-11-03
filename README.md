@@ -9,6 +9,8 @@ Sistema de gerenciamento de pedidos e produtos desenvolvido como desafio técnic
 - [Como executar](#como-executar)
     - [Variáveis de ambiente](#variáveis-de-ambiente)
     - [Banco de dados e migrações](#banco-de-dados-e-migrações)
+- [Documentação da API](#documentação-da-api)
+- [Usuários de demonstração](#usuários-de-demonstração)
 - [Autenticação e perfis de acesso](#autenticação-e-perfis-de-acesso)
 - [Guia de endpoints](#guia-de-endpoints)
     - [Autenticação](#autenticação)
@@ -70,6 +72,21 @@ Antes de executar a aplicação, garanta que o ambiente possui:
    ```bash
    ./mvnw test
    ```
+
+## Documentação da API
+- A aplicação publica automaticamente a especificação OpenAPI em `http://localhost:8080/v3/api-docs`.
+- A interface interativa do Swagger UI pode ser acessada em `http://localhost:8080/swagger-ui/index.html`.
+
+Esses endpoints são públicos e permitem testar os fluxos autenticados enviando o token JWT obtido no login.
+
+## Usuários de demonstração
+As migrações do Flyway criam usuários e produtos de exemplo para facilitar testes locais. As credenciais padrão são:
+
+| Perfil | Email | Senha |
+|--------|-------|-------|
+| ADMIN  | `admin@demo.com` | `123` |
+| USER   | `joao@demo.com`  | `123` |
+| USER   | `maria@demo.com` | `123` |
 
 ### Variáveis de ambiente
 A aplicação lê as propriedades JWT de `application.yml`, permitindo sobrescrever por variáveis de ambiente:
@@ -196,5 +213,13 @@ Execute todos os testes com o Maven Wrapper:
 ```bash
 ./mvnw test
 ```
-O teste de contexto (`EcommerceApplicationTests`) garante que a aplicação sobe com sucesso e que as configurações Spring estão válidas.
+Os principais cenários cobertos incluem:
 
+- **`EcommerceApplicationTests`** – smoke test que garante o carregamento completo do contexto Spring Boot.
+- **`AutenticacaoFacadeTest`** e **`AutenticacaoServiceTest`** – validam o fluxo de registro e autenticação, incluindo hashing de senha, geração de token e tratamento de credenciais inválidas.
+- **`TokenServiceTest`** – cobre a criação e validação de tokens JWT, além da extração de informações do usuário autenticado.
+- **`ProdutoServiceTest`** – verifica criação, atualização, deleção e paginação de produtos com as devidas regras de negócio e validações.
+- **`PedidoServiceTest`** – exercita a orquestração de pedidos, cálculos de totais, controle de estoque e transições de status.
+- **`RelatorioServiceTest`** – garante o cálculo dos relatórios administrativos (top compradores, ticket médio e faturamento mensal).
+
+> As classes de teste utilizam mocks do Mockito e o suporte do Spring Boot Test para isolar serviços de infraestrutura, permitindo execução rápida dos testes unitários.
