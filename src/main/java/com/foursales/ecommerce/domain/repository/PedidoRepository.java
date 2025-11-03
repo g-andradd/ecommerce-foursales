@@ -49,8 +49,9 @@ public interface PedidoRepository extends JpaRepository<Pedido, UUID> {
         SELECT IFNULL(SUM(p.total), 0) as totalFaturado
           FROM pedidos p\s
          WHERE p.status = 'PAGO'
-           AND YEAR(p.data_pagamento) = :ano
-           AND MONTH(p.data_pagamento) = :mes
+         AND p.pago_em IS NOT NULL
+         AND YEAR(p.pago_em) = :ano
+         AND MONTH(p.pago_em) = :mes
         \s""", nativeQuery = true)
     BigDecimal totalFaturadoNoMes(@Param("ano") int ano, @Param("mes") int mes);
 

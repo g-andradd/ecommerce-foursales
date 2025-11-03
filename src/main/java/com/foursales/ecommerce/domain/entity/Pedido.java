@@ -38,7 +38,7 @@ public class Pedido {
     @Column(name = "criado_em", nullable = false, updatable = false)
     private LocalDateTime criadoEm;
 
-    @Column(name = "pago_em", nullable = false, updatable = false)
+    @Column(name = "pago_em")
     private LocalDateTime pagoEm;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -46,7 +46,9 @@ public class Pedido {
     private List<ItemPedido> itens = new ArrayList<>();
 
     @PrePersist void prePersist() {
-        total = BigDecimal.ZERO;
+        if (total == null) {
+            total = BigDecimal.ZERO;
+        }
         if (status == null) status = StatusPedido.PENDENTE;
     }
 
