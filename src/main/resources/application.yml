@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/ecommerce?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/ecommerce?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: app
     password: app
   jpa:
@@ -20,3 +20,8 @@ security:
   jwt:
     secret: ${JWT_SECRET:Zmp3bDNKa1QxTnZBczRkUmtmVjNyQnpYajR2aVBsN2MyZ1h1R2pUQnA=}
     expiration: 3600000
+
+logging:
+  level:
+    org.springdoc: DEBUG
+    io.swagger.v3.core: DEBUG

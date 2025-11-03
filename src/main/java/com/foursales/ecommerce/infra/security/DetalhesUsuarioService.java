@@ -1,6 +1,6 @@
 package com.foursales.ecommerce.infra.security;
 
-import com.foursales.ecommerce.domain.entities.UsuarioEntity;
+import com.foursales.ecommerce.domain.entity.Usuario;
 import com.foursales.ecommerce.domain.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,7 +24,7 @@ public class DetalhesUsuarioService implements UserDetailsService{
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         final String normalizedEmail = (email == null) ? null : email.trim().toLowerCase(Locale.ROOT);
 
-        UsuarioEntity usuario = usuarioRepository.findByEmail(normalizedEmail)
+        Usuario usuario = usuarioRepository.findByEmail(normalizedEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
 
         GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + usuario.getPerfil().name());

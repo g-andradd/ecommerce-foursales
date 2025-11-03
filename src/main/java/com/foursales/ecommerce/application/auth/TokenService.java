@@ -17,7 +17,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class TokenResponse {
+public class TokenService {
 
     @Value("${security.jwt.secret}")
     private String secret;

@@ -1,4 +1,4 @@
-package com.foursales.ecommerce.domain.entities;
+package com.foursales.ecommerce.domain.entity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,8 +13,8 @@ import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 @Table(name = "usuarios")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class UsuarioEntity {
+@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
+public class Usuario {
 
     @Id
     @GeneratedValue
@@ -38,8 +38,8 @@ public class UsuarioEntity {
     private String senha;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 10)
-    private PerfilTipo perfil;
+    @Column(nullable = false)
+    private TipoPerfil perfil;
 
     @CreationTimestamp
     @Column(name = "criado_em", nullable = false, updatable = false)
