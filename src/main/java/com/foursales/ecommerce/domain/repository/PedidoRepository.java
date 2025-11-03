@@ -1,6 +1,9 @@
 package com.foursales.ecommerce.domain.repository;
 
 import com.foursales.ecommerce.domain.entity.Pedido;
+import com.foursales.ecommerce.domain.entity.StatusPedido;
+import com.foursales.ecommerce.domain.repository.projection.TicketMedioProjection;
+import com.foursales.ecommerce.domain.repository.projection.TopCompradorProjection;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,34 +28,40 @@ public interface PedidoRepository extends JpaRepository<Pedido, UUID> {
     @Query("select p from Pedido p where p.id in :ids")
     List<Pedido> findAllByIdForUpdate(@Param("ids") Collection<UUID> ids);
 
-    @Query(value = """
-        SELECT u.id as usuarioId, SUM(p.total) as totalGasto
-          FROM pedidos p\s
-          JOIN usuarios u ON u.id = p.usuario_id
-         WHERE p.status = 'PAGO'
-         GROUP BY u.id
-         ORDER BY totalGasto DESC
-         LIMIT 5
-       \s""", nativeQuery = true)
-    List<Object[]> top5UsuariosQueMaisCompraram();
+    @Query("""
+        SELECT p.usuarioId AS usuarioId,
+               SUM(p.total) AS totalGasto
+          FROM Pedido p
+         WHERE p.status = :statusPago
+         GROUP BY p.usuarioId
+         ORDER BY SUM(p.total) DESC
+        """)
+    Page<TopCompradorProjection> buscarTopCompradores(@Param("statusPago") StatusPedido statusPago, Pageable pageable);
 
-    @Query(value = """
-        SELECT u.id as usuarioId, AVG(p.total) as ticketMedio
-          FROM pedidos p\s
-          JOIN usuarios u ON u.id = p.usuario_id
-         WHERE p.status = 'PAGO'
-         GROUP BY u.id
-       \s""", nativeQuery = true)
-    List<Object[]> ticketMedioPorUsuario();
+    @Query("""
+        SELECT p.usuarioId AS usuarioId,
+               AVG(p.total) AS ticketMedio
+          FROM Pedido p
+         WHERE p.status = :statusPago
+         GROUP BY p.usuarioId
+        """)
+    List<TicketMedioProjection> calcularTicketMedioPorUsuario(@Param("statusPago") StatusPedido statusPago);
 
-    @Query(value = """
-        SELECT IFNULL(SUM(p.total), 0) as totalFaturado
-          FROM pedidos p\s
-         WHERE p.status = 'PAGO'
-         AND p.pago_em IS NOT NULL
-         AND YEAR(p.pago_em) = :ano
-         AND MONTH(p.pago_em) = :mes
-        \s""", nativeQuery = true)
-    BigDecimal totalFaturadoNoMes(@Param("ano") int ano, @Param("mes") int mes);
+    @Query("""
+        SELECT COALESCE(SUM(p.total), 0) as totalFaturado
+          FROM Pedido p
+         WHERE p.status = :statusPago
+           AND (
+                (p.pagoEm IS NOT NULL
+                 AND FUNCTION('YEAR', p.pagoEm) = :ano
+                 AND FUNCTION('MONTH', p.pagoEm) = :mes)
+             OR (p.pagoEm IS NULL
+                 AND FUNCTION('YEAR', p.criadoEm) = :ano
+                 AND FUNCTION('MONTH', p.criadoEm) = :mes)
+           )
+        """)
+    BigDecimal totalFaturadoNoMes(@Param("statusPago") StatusPedido statusPago,
+                                  @Param("ano") int ano,
+                                  @Param("mes") int mes);
 
 }
