@@ -36,7 +36,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, UUID> {
          GROUP BY p.usuarioId
          ORDER BY SUM(p.total) DESC
         """)
-    Page<TopCompradorProjection> buscarTopCompradores(@Param("statusPago") StatusPedido statusPago, Pageable pageable);
+    List<TopCompradorProjection> buscarTopCompradores(@Param("statusPago") StatusPedido statusPago, Pageable pageable);
 
     @Query("""
         SELECT p.usuarioId AS usuarioId,

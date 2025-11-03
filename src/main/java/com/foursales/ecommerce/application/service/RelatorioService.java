@@ -28,8 +28,9 @@ public class RelatorioService {
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional(readOnly = true)
     public List<TopCompradorResponse> top5UsuariosQueMaisCompraram() {
-        var pageable = PageRequest.of(0, TOP_COMPRADORES_LIMITE);
-        return pedidoRepository.buscarTopCompradores(STATUS_PAGO, pageable).stream()
+        var pageable = PageRequest.of(0, TOP_COMPRADORES_LIMITE); // ex: 5
+        return pedidoRepository.buscarTopCompradores(STATUS_PAGO, pageable)
+                .stream()
                 .map(relatorioMapper::toResponse)
                 .toList();
     }
